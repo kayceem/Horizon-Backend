@@ -12,7 +12,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(255), unique=True, nullable=False)
     email = Column(String(255), unique=True, nullable=False)
-    password_hash = Column(String(64), nullable=False)
+    password = Column(String(64), nullable=False)
     first_name = Column(String(255))
     last_name = Column(String(255))
     contact_number = Column(BigInteger, nullable=False, unique=True)
@@ -35,7 +35,7 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     title = Column(String(255), nullable=False)
     description = Column(Text)
-    price = Column(Numeric(10,2))
+    price = Column(Numeric(10,2), nullable=False)
     image_url = Column(String(255))
     views = Column(Integer, default=0)
     ############ many products to one user or category ############

@@ -9,7 +9,7 @@ def create_users(session, n=50):
         user = models.User(
             username=fake.user_name(),
             email=fake.email(),
-            password_hash=fake.sha256(),
+            password=fake.sha256(),
             first_name=fake.first_name(),
             last_name=fake.last_name(),
             contact_number=fake.random_number(digits=10, fix_len=True)
