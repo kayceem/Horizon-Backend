@@ -1,8 +1,11 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, BigInteger, Text
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import  text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, BigInteger, Text
+
+# from database import engine
+# Base.metadata.create_all(bind=engine)
 
 class User(Base):
     __tablename__ = 'user'
@@ -74,6 +77,3 @@ class WishListItem(Base):
     user = relationship('User', backref='wish_list_item')
     product = relationship('Product', backref='wish_list_item')
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
-    
-# from database import engine
-# Base.metadata.create_all(bind=engine)
