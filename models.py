@@ -20,17 +20,17 @@ class User(Base):
 class Category(Base):
     __tablename__ = 'category'  
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), unique=True)
-    description = Column(Text)
+    name = Column(String(255), unique=True, nullable=False)
+    description = Column(Text, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
 
 class Product(Base):
     __tablename__ = 'product'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    category_id = Column(Integer, ForeignKey('category.id'))
-    title = Column(String(255))
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
+    title = Column(String(255), nullable=False)
     description = Column(Text)
     price = Column(Numeric(10,2))
     image_url = Column(String(255))
@@ -44,9 +44,9 @@ class Product(Base):
 class Message(Base):
     __tablename__ = 'message'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    sender_id = Column(Integer, ForeignKey('user.id'))
-    receiver_id = Column(Integer, ForeignKey('user.id'))
-    content = Column(Text)
+    sender_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    receiver_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    content = Column(Text, nullable=False)
     ############ many messages to sender or user ############
     sender = relationship('User', foreign_keys=[sender_id], backref='sent_messages')
     receiver = relationship('User', foreign_keys=[receiver_id], backref='received_messages')
@@ -55,9 +55,9 @@ class Message(Base):
 class Review(Base):
     __tablename__ = 'review'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    reviewer_id = Column(Integer, ForeignKey('user.id'))
-    reviewee_id = Column(Integer, ForeignKey('user.id'))
-    rating = Column(Integer)
+    reviewer_id = Column(Integer, ForeignKey('user.id'), nullable=False) 
+    reviewee_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    rating = Column(Integer, nullable=False)
     comment = Column(Text)
     ############ many reviews to reviewer or reviewee ############
     reviewer = relationship('User', foreign_keys=[reviewer_id])
@@ -66,9 +66,9 @@ class Review(Base):
 
 class WishListItem(Base):
     __tablename__ = 'wish_list_item'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    product_id = Column(Integer, ForeignKey('product.id'))
+    # id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    product_id = Column(Integer, ForeignKey('product.id'), primary_key=True)
     ############ many wishlistitem to user or product ############
     # One product can be related to many WishListItem instances.
     user = relationship('User', backref='wish_list_item')
@@ -77,14 +77,3 @@ class WishListItem(Base):
     
 # from database import engine
 # Base.metadata.create_all(bind=engine)
-# import random
-# from database import SessionLocal
-# session = SessionLocal()
-# user_ids = [1, 4, 5, 67, 21,30,31,32,33,34,35]
-# sent_messages = session.query(Message).filter(Message.sender_id.in_(user_ids)).all()
-
-# # Print the messages
-# for msg in sent_messages:
-#     print(f"Message ID: {msg.id}, Sender ID: {msg.sender_id}, Receiver ID: {msg.receiver_id}, Content: {msg.content}")
-
-# session.close()
