@@ -30,7 +30,7 @@ class Token(BaseModel):
     token_type:str
 
 class TokenData(BaseModel):
-    id: Optional[str] = None
+    id: str
 
 class ProductBase(BaseModel):
     title: str
@@ -46,3 +46,4 @@ class ProductCreate(ProductBase):
 
 class ProductResponse(ProductBase):
     id:int
+    user_id: int
