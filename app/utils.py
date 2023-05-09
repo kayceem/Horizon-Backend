@@ -11,11 +11,15 @@ def hash(passwd:str):
 def verify(passwd, hashed_passwd):
     return passwd_context.verify(passwd,hashed_passwd)
 
+def check_user(db:Session, id:int):
+    user = db.query(models.User).filter(models.User.id == id).first()
+    return user
+        
 def check_conflicts(db: Session,
                       username:str=None,
                       email:str=None,
                       contact_number:int=None,
-                      ):
+                      **kwargs):
     existing_user = db.query(models.User).filter(or_(models.User.username == username,
                                                      models.User.email == email,
                                                      models.User.contact_number == contact_number)).first()
@@ -30,8 +34,3 @@ def check_conflicts(db: Session,
     if existing_user.contact_number == contact_number:
         conflict['contact_number'] = contact_number
     return conflict
-
-def check_user(db:Session, id:int):
-    user = db.query(models.User).filter(models.User.id == id).first()
-    return user
-    

@@ -1,6 +1,6 @@
 import random
 from faker import Faker
-import models
+import models, utils
 from database import SessionLocal
 fake = Faker()
 
@@ -9,7 +9,7 @@ def create_users(session, n=50):
         user = models.User(
             username=fake.user_name(),
             email=fake.email(),
-            password=fake.sha256(),
+            password=utils.hash('you'),
             first_name=fake.first_name(),
             last_name=fake.last_name(),
             contact_number=fake.random_number(digits=10, fix_len=True)
@@ -41,7 +41,7 @@ def create_products(session, n=50):
         product = models.Product(
             user_id=random.choice(users).id,
             category_id=random.choice(categories).id,
-            title=fake.sentence(),
+            title=fake.word() +" "+  fake.word(),
             description=fake.text(),
             price=round(random.uniform(1, 1000), 2),
             image_url=fake.image_url(),
@@ -100,12 +100,12 @@ def create_wishlist_items(session, n=50):
     session.commit()
 
 def generate_data(session):
-    create_users(session, 100)
-    create_categories(session,20)
-    create_products(session,40)
-    create_reviews(session, 50)
-    create_messages(session,200)
-    create_wishlist_items(session, 120)
+    create_users(session, 10)
+    create_categories(session,10)
+    create_products(session,30)
+    create_reviews(session, 15)
+    create_messages(session,80)
+    create_wishlist_items(session, 35)
 
 with SessionLocal() as session:
     generate_data(session)

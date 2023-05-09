@@ -1,14 +1,10 @@
-import uvicorn
-import models 
+import uvicorn, models
+import user, auth, product
 from database import engine
 from fastapi import FastAPI, APIRouter
-import user, auth, product
 
-try:
-    # Create all the tables
-    models.Base.metadata.create_all(bind=engine)
-except Exception as e:
-    print(e)
+# Create all the tables
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 router = APIRouter(

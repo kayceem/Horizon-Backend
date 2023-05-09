@@ -17,7 +17,6 @@ class User(Base):
     contact_number = Column(BigInteger, nullable=False, unique=True)
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
-    last_login = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP'), nullable=False)
 
 class Category(Base):
     __tablename__ = 'category'  
@@ -38,8 +37,8 @@ class Product(Base):
     image_url = Column(String(255))
     views = Column(Integer, default=0)
     ############ many products to one user or category ############
-    user = relationship('User', backref=backref('product', cascade='all, delete-orphan'), uselist=True)
-    category = relationship('Category', backref='product', uselist=True)
+    user = relationship('User', backref=backref('product', cascade='all, delete-orphan'))
+    category = relationship('Category', backref='product')
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
 

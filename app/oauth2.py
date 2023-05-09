@@ -1,5 +1,6 @@
-import schemas
 from jose import jwt, JWTError
+import schemas, database, models
+from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from fastapi import status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -7,15 +8,16 @@ from fastapi.security import OAuth2PasswordBearer
 # Secret Key used to hash info
 SECRET_KEY = "45sadsa4d4qw4e54gfsdf4asadgfhdtrvcertjdfhmfvcnbc"
 ALGORITHM ="HS256"
-TOKEN_EXPIRY_DAYS = 2
+# TOKEN_EXPIRY_DAYS = 2
 # TOKEN_EXPIRY_HOURS = 12
+TOKEN_EXPIRY_MINUTES = 60
 # TOKEN_EXPIRY_SECONDS = 30
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 def create_token(data:dict):
     to_encode= data.copy()
-    expire = datetime.utcnow()+timedelta(days=TOKEN_EXPIRY_DAYS)
+    expire = datetime.utcnow()+timedelta(days=TOKEN_EXPIRY_MINUTES)
     to_encode.update({"exp":expire})
     ########################################################################################
     ######## print(to_encode)   ############################################################
@@ -39,8 +41,13 @@ def verify_token(token:str, credentials_exceptions):
         raise credentials_exceptions
     return token_data
 
-def get_current_user(token=Depends(oauth_scheme)):
+def get_current_user(token=Depends(oauth_scheme), db: Session =Depends(database.get_db)):
         credentials_exceptions = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                               detail="Could not verify credentials",
+                                               detail="Could not validate credentials!",
                                                headers={"WWW-Authenticate":"Bearer"})
-        return verify_token(token, credentials_exceptions)
+        token = verify_token(token, credentials_exceptions)
+        user = db.query(models.User).filter(models.User.id == token.id).first()
+        if user == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail="User doesnot exists")
+        return user
