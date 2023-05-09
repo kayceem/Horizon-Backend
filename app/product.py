@@ -1,6 +1,7 @@
 from database import get_db
-from typing import List, Optional
+from typing import List, Optional, Union
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 import schemas, models, oauth2, utils
 from fastapi import Depends, status, HTTPException, APIRouter
 
@@ -10,38 +11,63 @@ router = APIRouter(
 )
 
 # Get products
-@router.get('/', response_model=List[schemas.ProductResponse])
+@router.get('/', response_model=List[Union[schemas.ProductResponse, schemas.ProductResponseNoUser]])
 async def get_products(user_id: Optional[int] = None,
                        limit: int = 40,
                        skip:int = 0,
                        search:Optional[str]="", 
-                       db: Session = Depends(get_db)
+                       db: Session = Depends(get_db),
+                       current_user:Optional[dict] = Depends(oauth2.get_optional_current_user)
                        ):
-    if not user_id:
-        products = db.query(models.Product).filter(models.Product.title.contains(search)).limit(limit=limit).offset(skip).all()
-        return products
-    user = utils.check_user(db=db, id=user_id)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    products = db.query(models.Product).filter(
-        models.Product.user_id == user.id).all()
+
+    query_conditions=[models.Product.title.contains(search)]
+    if user_id:
+        user = utils.check_user(db=db, id=user_id)
+        query_conditions.append(models.User.id == user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    products = (
+                db.query(models.Product)
+                .join(models.User, models.Product.user)
+                .filter(and_(*query_conditions))
+                .limit(limit=limit)
+                .offset(skip)
+                .all()
+                )
     if not products:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No products not found")
-    return products
+    if current_user:
+        response = [schemas.ProductResponse.from_orm(product) for product in products]
+    else:
+        response = [schemas.ProductResponseNoUser.from_orm(product) for product in products]
+    return response
 
 # Get product
-@router.get('/{id}', response_model=schemas.ProductResponse)
+@router.get('/{id}', response_model=Union[schemas.ProductResponse, schemas.ProductResponseNoUser])
 async def get_products(id,
-                       db: Session = Depends(get_db)
+                       db: Session = Depends(get_db),
+                       current_user = Depends(oauth2.get_optional_current_user)
                        ):
-
     product = db.query(models.Product).filter(models.Product.id == id).first()
+
+        
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No products not found")
-    return product
+    if current_user:
+        response = schemas.ProductResponse.from_orm(product)
+    else:
+        response = schemas.ProductResponseNoUser.from_orm(product)
+        
+    if current_user:
+        product.views+=1
+        db.commit()
+        db.refresh(product)
+        return response
+    return response
 
 
 # Create product listing

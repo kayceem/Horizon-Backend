@@ -58,3 +58,7 @@ class ProductResponse(ProductBase):
     user_id: int
     views:int
     user: UserBase
+
+class ProductResponseNoUser(ProductBase):
+    id: int
+    views: int

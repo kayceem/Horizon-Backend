@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from fastapi import status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from config import settings
+from typing import Optional
 
 # Secret Key used to hash info
 SECRET_KEY = settings.secret_key
@@ -35,13 +36,18 @@ def verify_token(token:str, credentials_exceptions):
         raise credentials_exceptions
     return token_data
 
-def get_current_user(token=Depends(oauth_scheme), db: Session =Depends(database.get_db)):
+def get_current_user(token:Optional[str]=Depends(oauth_scheme), db: Session =Depends(database.get_db), required=True):
         credentials_exceptions = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                               detail="Could not validate credentials!",
+                                               detail="Could not validate credentials",
                                                headers={"WWW-Authenticate":"Bearer"})
+                                            
+        if (token=='' or token.lower() == 'undefined') and not required:
+            return None
         token = verify_token(token, credentials_exceptions)
         user = db.query(models.User).filter(models.User.id == token.id).first()
-        if user == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail="User doesnot exists")
+        if required and not user:
+          raise credentials_exceptions
         return user
+    
+def get_optional_current_user(token: Optional[str] = Depends(oauth_scheme), db: Session = Depends(database.get_db)):
+    return get_current_user(token, db, required=False)
