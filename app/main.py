@@ -1,5 +1,5 @@
 import uvicorn, models
-import user, auth, product
+import user, auth, product, wish_list
 from database import engine
 from fastapi import FastAPI, APIRouter
 
@@ -15,6 +15,7 @@ router = APIRouter(
 router.include_router(user.router)
 router.include_router(auth.router)
 router.include_router(product.router)
+router.include_router(wish_list.router)
 
 @router.get('/')    
 async def home():

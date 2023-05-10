@@ -23,14 +23,13 @@ async def get_products(user_id: Optional[int] = None,
     query_conditions=[models.Product.title.contains(search)]
     if user_id:
         user = utils.check_user(db=db, id=user_id)
-        query_conditions.append(models.User.id == user_id)
+        query_conditions.append(models.Product.user_id == user_id)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
     products = (
                 db.query(models.Product)
-                .join(models.User, models.Product.user)
                 .filter(and_(*query_conditions))
                 .limit(limit=limit)
                 .offset(skip)
@@ -56,7 +55,7 @@ async def get_products(id,
         
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No products not found")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No product not found")
     if current_user:
         response = schemas.ProductResponse.from_orm(product)
     else:
@@ -66,7 +65,6 @@ async def get_products(id,
         product.views+=1
         db.commit()
         db.refresh(product)
-        return response
     return response
 
 

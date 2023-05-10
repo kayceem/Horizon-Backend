@@ -67,13 +67,12 @@ class Review(Base):
 
 class WishListItem(Base):
     __tablename__ = 'wish_list_item'
-    # id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'), primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id', ondelete='CASCADE'), primary_key=True)
     ############ many wishlistitem to user or product ############
     # One product can be related to many WishListItem instances.
-    user = relationship('User', backref=backref('wish_list_item', cascade='all, delete-orphan'))
-    product = relationship('Product', backref=backref('wish_list_item', cascade='all, delete-orphan'))
+    user = relationship('User', backref=backref('wish_list_items', cascade='all, delete-orphan'))
+    product = relationship('Product', backref=backref('wish_list_items', cascade='all, delete-orphan'))
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
 
 # from database import engine

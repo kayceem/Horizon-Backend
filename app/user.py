@@ -6,7 +6,7 @@ import schemas
 import utils
 import models
 from sqlalchemy.orm import Session
-from fastapi import Depends, status, HTTPException, APIRouter
+from fastapi import Depends, status, HTTPException, APIRouter, Response
 
 router = APIRouter(
     prefix='/users',
@@ -26,7 +26,9 @@ async def get_users(db: Session = Depends(get_db)):
 
 
 @router.get('/{id}', response_model=schemas.UserResponse)
-async def get_user(id: int, db: Session = Depends(get_db)):
+async def get_user(id: int,
+                   db: Session = Depends(get_db), 
+                   current_user: models.User = Depends(oauth2.get_current_user)):
     user = utils.check_user(db=db, id=id)
     if not user:
         raise HTTPException(
@@ -37,7 +39,12 @@ async def get_user(id: int, db: Session = Depends(get_db)):
 # Create user
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
 async def create_user(user: schemas.UserCreate,
-                      db: Session = Depends(get_db)):
+                      db: Session = Depends(get_db),
+                      current_user: models.User = Depends(oauth2.get_optional_current_user)
+                      ):
+    if current_user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Logout to create a new account")
+
     conflicts = utils.check_conflicts(db, **user.dict())
 
     if conflicts:
@@ -60,6 +67,7 @@ async def delete_user(update_user : schemas.UserCreate,
     if conflicts:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=conflicts)
+    update_user.password = utils.hash(update_user.password)
     db.query(models.User).filter(models.User.id==current_user.id).update(update_user.dict(), synchronize_session=False)
     db.commit()
     db.refresh(current_user)
@@ -69,9 +77,10 @@ async def delete_user(update_user : schemas.UserCreate,
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(db: Session = Depends(get_db),
                       current_user: models.User = Depends(oauth2.get_current_user)):
-    # user = utils.check_user(db=db, id=current_user.id)
-    # if not user:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     db.delete(current_user)
     db.commit()
+
+@router.post("/logout")
+async def logout(response: Response, current_user: models.User = Depends(oauth2.get_current_user)):
+    response.delete_cookie(key="access_token")
+    return {"message": "Logged out successfully"}
