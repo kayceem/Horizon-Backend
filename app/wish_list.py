@@ -15,9 +15,7 @@ router = APIRouter(
 )
 
 @router.get('/', response_model=List[schemas.WishListItemResponse])
-def get_wishlist(db:Session=Depends(get_db),
-                 current_user=Depends(oauth2.get_current_user)
-                 ):
+def get_wishlist(current_user=Depends(oauth2.get_current_user)):
     return current_user.wish_list_items
 
 @router.post('/', status_code=status.HTTP_201_CREATED)

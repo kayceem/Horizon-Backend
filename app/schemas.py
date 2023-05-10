@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, validator, Field, constr, conint
+from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional
 from datetime import datetime
 import re
@@ -89,3 +89,33 @@ class WishListItemResponse(BaseModel):
     product:ProductResponseNoUser
     class Config:
         orm_mode = True 
+        
+class MessageCreate(BaseModel):
+    receiver_id: int
+    content: str
+
+class MessageResponse(BaseModel):
+    id: int
+    sender_id: int
+    receiver_id: int
+    content: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+class ReviewCreate(BaseModel):
+    reviewee_id: int
+    rating: int
+    comment: Optional[str] = None
+
+class ReviewResponse(BaseModel):
+    id: int
+    reviewer_id: int
+    reviewee_id: int
+    rating: int
+    comment: Optional[str]
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
