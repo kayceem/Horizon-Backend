@@ -1,10 +1,11 @@
 import random
 from faker import Faker
 import models, utils
-from database import SessionLocal
+import database
+import time
 fake = Faker()
 
-def create_users(session, n=50):
+def create_users(session, n=50, sleep=0):
     for _ in range(n):
         user = models.User(
             username=fake.user_name(),
@@ -15,7 +16,8 @@ def create_users(session, n=50):
             contact_number=fake.random_number(digits=10, fix_len=True)
         )
         session.add(user)
-    session.commit()
+        session.commit()
+        time.sleep(sleep)
 
 def create_categories(session, n=10):
     categories = [
@@ -33,7 +35,7 @@ def create_categories(session, n=10):
         session.add(category)
     session.commit()
 
-def create_products(session, n=50):
+def create_products(session, n=50,sleep=0):
     users = session.query(models.User).all()
     categories = session.query(models.Category).all()
 
@@ -48,10 +50,11 @@ def create_products(session, n=50):
             views=random.randint(0, 1000)
         )
         session.add(product)
-    session.commit()
+        session.commit()
+        time.sleep(sleep)
 
 
-def create_reviews(session, n=50):
+def create_reviews(session, n=50, sleep=0):
     users = session.query(models.User).all()
 
     for _ in range(n):
@@ -63,9 +66,10 @@ def create_reviews(session, n=50):
             comment=fake.text()
         )
         session.add(review)
-    session.commit()
+        session.commit()
+        time.sleep(sleep)
 
-def create_messages(session, n=50):
+def create_messages(session, n=50, sleep=0):
     users = session.query(models.User).all()
 
     for _ in range(n):
@@ -76,9 +80,10 @@ def create_messages(session, n=50):
             content=fake.text()
         )
         session.add(message)
-    session.commit()
+        session.commit()
+        time.sleep(sleep)
 
-def create_wishlist_items(session, n=50):
+def create_wishlist_items(session, n=50, sleep=0):
     users = session.query(models.User).all()
     products = session.query(models.Product).all()
     added_pair = set()
@@ -97,15 +102,16 @@ def create_wishlist_items(session, n=50):
         )
         session.add(wishlist_item)
         added_pair.add(pair)
-    session.commit()
+        session.commit()
+        time.sleep(sleep)
 
-def generate_data(session):
-    create_users(session, 10)
+def generate_data(session, sleep):
+    create_users(session, 10, sleep)
     create_categories(session,10)
-    create_products(session,30)
-    create_reviews(session, 15)
-    create_messages(session,80)
-    create_wishlist_items(session, 35)
+    create_products(session,30, sleep)
+    create_reviews(session, 15, sleep)
+    create_messages(session,80), sleep
+    create_wishlist_items(session, 35, sleep)
 
-with SessionLocal() as session:
-    generate_data(session)
+with database.SessionLocal() as session:
+    generate_data(session, sleep=0.2)

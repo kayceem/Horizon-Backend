@@ -1,9 +1,7 @@
-import utils
 import oauth2
 from typing import List
 from database import get_db
 import schemas
-import utils
 import models
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter

@@ -108,6 +108,12 @@ class ReviewCreate(BaseModel):
     reviewee_id: int
     rating: int
     comment: Optional[str] = None
+    
+    @validator('rating')
+    def validate_rating(cls, v):
+        if v>5 or v<0:
+            raise ValueError('Rating must be 1 to 5')
+        return v
 
 class ReviewResponse(BaseModel):
     id: int

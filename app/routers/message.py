@@ -34,7 +34,7 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
                         (models.Message.receiver_id == current_user.id) & (models.Message.sender_id == subquery.c.user_id)
                     ) &
                     (models.Message.created_at == subquery.c.latest_created_at)
-                ).all()
+                ).order_by(desc(models.Message.created_at)).limit(20).all()
     return latest_messages
 
 # Get messages with user 

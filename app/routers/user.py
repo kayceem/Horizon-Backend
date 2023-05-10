@@ -25,11 +25,11 @@ async def get_users(db: Session = Depends(get_db)):
 # Get user with id
 
 
-@router.get('/{id}', response_model=schemas.UserResponse)
-async def get_user(id: int,
+@router.get('/{user_id}', response_model=schemas.UserResponse)
+async def get_user(user_id: int,
                    db: Session = Depends(get_db), 
                    current_user: models.User = Depends(oauth2.get_current_user)):
-    user = utils.check_user(db=db, id=id)
+    user = utils.check_user(db=db, id=user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
