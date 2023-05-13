@@ -26,7 +26,7 @@ async def get_users(db: Session = Depends(get_db)):
 
 
 @router.get('/{user_id}', response_model=schemas.UserResponse)
-async def get_user(user_id: int,
+async def get_user_by_id(user_id: int,
                    db: Session = Depends(get_db), 
                    current_user: models.User = Depends(oauth2.get_current_user)):
     user = utils.check_user(db=db, id=user_id)
@@ -59,7 +59,7 @@ async def create_user(user: schemas.UserCreate,
 
 # Update User
 @router.put('/', status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
-async def delete_user(update_user : schemas.UserCreate,
+async def update_user(update_user : schemas.UserCreate,
                       db: Session = Depends(get_db),
                       current_user: models.User = Depends(oauth2.get_current_user)
                       ):

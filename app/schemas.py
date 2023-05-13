@@ -58,14 +58,10 @@ class TokenData(BaseModel):
 
 
 class ProductBase(BaseModel):
-    title: str = Field(min_length=4, max_length=255)
+    name: str = Field(min_length=4, max_length=255)
     price: float
     description: Optional[str] = None
-    image_url: Optional[str] = None
     category_id: Optional[int] = None
-
-    class Config:
-        orm_mode = True
 
 
 class ProductCreate(ProductBase):
@@ -77,10 +73,16 @@ class ProductResponse(ProductBase):
     views:int
     user: UserBase
 
+    
+    class Config:
+        orm_mode = True
+
 class ProductResponseNoUser(ProductBase):
     id: int
     views: int
-
+    
+    class Config:
+        orm_mode = True
 
 class WishListItem(BaseModel):
     product_id:int

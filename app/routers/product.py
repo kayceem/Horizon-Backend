@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 import schemas, models, oauth2, utils
-from fastapi import Depends, status, HTTPException, APIRouter
+from fastapi import Depends, status, HTTPException, APIRouter, UploadFile, File
 
 router = APIRouter(
     prefix='/products',
@@ -20,7 +20,7 @@ async def get_products(user_id: Optional[int] = None,
                        current_user:Optional[dict] = Depends(oauth2.get_optional_current_user)
                        ):
 
-    query_conditions=[models.Product.title.contains(search)]
+    query_conditions=[models.Product.name.contains(search)]
     if user_id:
         user = utils.check_user(db=db, id=user_id)
         query_conditions.append(models.Product.user_id == user_id)
@@ -46,7 +46,7 @@ async def get_products(user_id: Optional[int] = None,
 
 # Get product
 @router.get('/{id}', response_model=Union[schemas.ProductResponse, schemas.ProductResponseNoUser])
-async def get_products(id,
+async def get_product(id,
                        db: Session = Depends(get_db),
                        current_user = Depends(oauth2.get_optional_current_user)
                        ):
@@ -70,9 +70,9 @@ async def get_products(id,
 
 # Create product listing
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductResponse)
-def get_product(product: schemas.ProductCreate,
-                db: Session = Depends(get_db),
-                current_user = Depends(oauth2.get_current_user)
+async def create_product(product: schemas.ProductCreate,
+                         db: Session = Depends(get_db),
+                         current_user = Depends(oauth2.get_current_user)
                 ):
     new_product = models.Product(
         user_id=current_user.id, **product.dict())  # Unpcak dictionary
@@ -83,10 +83,10 @@ def get_product(product: schemas.ProductCreate,
 
 # Update product listing
 @router.put('/{id}', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductResponse)
-def update_product(id: int, 
-                   updated_product: schemas.ProductCreate,
-                   db: Session = Depends(get_db),
-                   current_user = Depends(oauth2.get_current_user)
+async def update_product(id: int,
+                         updated_product: schemas.ProductCreate,
+                         db: Session = Depends(get_db),
+                         current_user = Depends(oauth2.get_current_user)
                    ):
     product_query = db.query(models.Product).filter(models.Product.id == id)
     product = product_query.first()

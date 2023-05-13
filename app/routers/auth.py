@@ -33,6 +33,7 @@ def login(user_credentials:OAuth2PasswordRequestForm = Depends(), db:Session = D
         value=token,
         httponly=True,
         max_age=oauth2.TOKEN_EXPIRY_MINUTES * 60,  # Token expiration in seconds
+        samesite="none",
         secure=True,  # Uncomment this line for HTTPS only
     )
     return response

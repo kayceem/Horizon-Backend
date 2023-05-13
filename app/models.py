@@ -18,6 +18,16 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
 
+class Admin(Base):
+    __tablename__ = 'admin'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(255), unique=True, nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(64), nullable=False)
+    role = Column(String(255), nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
+    updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
+
 class Category(Base):
     __tablename__ = 'category'  
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -31,7 +41,7 @@ class Product(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     category_id = Column(Integer, ForeignKey('category.id'), nullable=True)
-    title = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
     description = Column(Text)
     price = Column(Numeric(10,2), nullable=False)
     image_url = Column(String(255))

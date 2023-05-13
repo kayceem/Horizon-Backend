@@ -43,7 +43,7 @@ def create_products(session, n=50,sleep=0):
         product = models.Product(
             user_id=random.choice(users).id,
             category_id=random.choice(categories).id,
-            title=fake.word() +" "+  fake.word(),
+            name=(fake.word() +" "+  fake.word()).title(),
             description=fake.text(),
             price=round(random.uniform(1, 1000), 2),
             image_url=fake.image_url(),

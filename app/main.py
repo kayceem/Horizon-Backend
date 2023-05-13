@@ -1,12 +1,20 @@
 import uvicorn, models
 from database import engine
 from fastapi import FastAPI, APIRouter
-from routers import auth, message, user, product, wish_list, review
+from fastapi.middleware.cors import CORSMiddleware
+from routers import auth, message, user, product, wish_list, review, image
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 router = APIRouter(
     prefix='/api',
     tags=['Root']
@@ -18,6 +26,7 @@ router.include_router(product.router)
 router.include_router(wish_list.router)
 router.include_router(message.router)
 router.include_router(review.router)
+router.include_router(image.router)
 
 @router.get('/')    
 async def home():
