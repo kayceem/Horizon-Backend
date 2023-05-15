@@ -104,9 +104,10 @@ async def update_product(id: int,
 
 # Delete product listing
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(id: int,
+async def delete_product(id: int,
                       db: Session = Depends(get_db),
-                      current_user: int = Depends(oauth2.get_current_user)):
+                      current_user = Depends(oauth2.get_current_user)
+                      ):
 
     product_query = db.query(models.Product).filter(
         (models.Product.id == id))

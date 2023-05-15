@@ -75,12 +75,10 @@ async def update_user(update_user : schemas.UserCreate,
     
 # Delete User
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(db: Session = Depends(get_db),
+async def delete_user(response:Response,
+                      db: Session = Depends(get_db),
                       current_user: models.User = Depends(oauth2.get_current_user)):
+    response.delete_cookie(key="access_token")
     db.delete(current_user)
     db.commit()
 
-@router.post("/logout")
-async def logout(response: Response, current_user: models.User = Depends(oauth2.get_current_user)):
-    response.delete_cookie(key="access_token")
-    return {"message": "Logged out successfully"}

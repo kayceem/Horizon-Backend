@@ -17,7 +17,9 @@ oauth_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 def create_token(data:dict):
     to_encode= data.copy()
+    iat = datetime.utcnow()
     expire = datetime.utcnow()+timedelta(minutes=TOKEN_EXPIRY_MINUTES)
+    to_encode.update({"iat":iat})
     to_encode.update({"exp":expire})
     # Signing JWT
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm= ALGORITHM)
