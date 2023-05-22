@@ -1,12 +1,11 @@
 from sqlalchemy.orm import Session
-from database import get_db
-import schemas,utils, models
 from fastapi import Depends, status, APIRouter, UploadFile, File
 import oauth2
 from fastapi.responses import JSONResponse
 from typing import Optional
 from PIL import Image
 from io import BytesIO
+from uuid import uuid4
 
 router=APIRouter(
     prefix='/images',
@@ -18,13 +17,16 @@ async def upload_image(image: Optional[UploadFile] = File(None),
                        current_user=Depends(oauth2.get_current_user)
                        ):
     if image is None:
-        return JSONResponse(content={"success": False, "detail": "No file uploaded."})
+        return {"success": False, "detail": "No file uploaded."}
 
     try:
         img=Image.open(BytesIO(await image.read()))
     except Exception:
-        return JSONResponse(content={"success": False, "detail": "Invalid image file."})
+        return {"success": False, "detail": "Invalid image file."}
 
-    file_location = f"./{image.filename}"
-    img.save(file_location)
-    return JSONResponse(content={"success": True})
+    file_name = f"{str(uuid4())}.webp"
+    file_location = f"/app/static/images/{file_name}"
+    img_webp = img.convert("RGB")
+    img_webp.save(file_location, "WebP")
+    print(file_name)
+    return {"success": True, "image_url":file_name}

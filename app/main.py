@@ -2,12 +2,14 @@ import uvicorn, models
 from database import engine
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from routers import auth, message, user, product, wish_list, review, image
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="app/static/Images"), name="static")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

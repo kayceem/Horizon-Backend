@@ -58,10 +58,11 @@ class TokenData(BaseModel):
 
 
 class ProductBase(BaseModel):
-    name: str = Field(min_length=4, max_length=255)
+    name: str = Field(min_length=3, max_length=255)
     price: float
     description: Optional[str] = None
     category_id: Optional[int] = None
+    image_url:Optional[str]=None
 
 
 class ProductCreate(ProductBase):
