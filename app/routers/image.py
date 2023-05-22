@@ -25,8 +25,8 @@ async def upload_image(image: Optional[UploadFile] = File(None),
         return {"success": False, "detail": "Invalid image file."}
 
     file_name = f"{str(uuid4())}.webp"
-    file_location = f"/app/static/images/{file_name}"
+    file_location = f"./app/static/images/{file_name}"
     img_webp = img.convert("RGB")
     img_webp.save(file_location, "WebP")
     print(file_name)
-    return {"success": True, "image_url":file_name}
+    return {"success": True, "image_url":f"static/{file_name}"}
