@@ -45,7 +45,7 @@ async def create_user(user: schemas.UserCreate,
     if current_user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Logout to create a new account")
 
-    conflicts = utils.check_conflicts(db, **user.dict())
+    conflicts = utils.check_conflicts(db, current_user, **user.dict())
 
     if conflicts:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -63,7 +63,7 @@ async def update_user(update_user : schemas.UserCreate,
                       db: Session = Depends(get_db),
                       current_user: models.User = Depends(oauth2.get_current_user)
                       ):
-    conflicts = utils.check_conflicts(db, **update_user.dict())
+    conflicts = utils.check_conflicts(db, current_user, **update_user.dict())
     if conflicts:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=conflicts)

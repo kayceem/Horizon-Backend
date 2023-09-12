@@ -16,10 +16,11 @@ def check_user(db:Session, id:int):
     return user
         
 def check_conflicts(db: Session,
-                      username:str=None,
-                      email:str=None,
-                      contact_number:int=None,
-                      **kwargs):
+                    current_user: models.User,
+                    username:str=None,
+                    email:str=None,
+                    contact_number:int=None,
+                    **kwargs):
     existing_user = db.query(models.User).filter(or_(models.User.username == username,
                                                      models.User.email == email,
                                                      models.User.contact_number == contact_number)).first()
@@ -27,6 +28,14 @@ def check_conflicts(db: Session,
         return None
 
     conflict = {}
+    if current_user:
+        if existing_user.username == username and current_user.username != existing_user.username:
+            conflict['username'] = username
+        if existing_user.email == email and current_user.email != existing_user.email:
+            conflict['email'] = email
+        if existing_user.contact_number == contact_number and current_user.contact_number != existing_user.contact_number:
+            conflict['contact_number'] = contact_number
+        return conflict
     if existing_user.username == username:
         conflict['username'] = username
     if existing_user.email == email:
