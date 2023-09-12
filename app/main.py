@@ -7,7 +7,7 @@ from routers import auth, message, user, product, wish_list, review, image
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
-
+#  Initialize FastAPI
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static/Images"), name="static")
 app.add_middleware(
