@@ -51,6 +51,8 @@ def get_given_reviews(db: Session = Depends(get_db),
                      .order_by(desc(models.Review.created_at))
                      .all()
                      )
+    if not given_reviews:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No reviews given yet")
     return given_reviews
 
 @router.post("/", response_model=schemas.ReviewResponse)
