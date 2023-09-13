@@ -28,7 +28,7 @@ async def get_products(kwd: Optional[str] = None,
                        current_user = Depends(oauth2.get_optional_current_user)
                        ):
 
-    query_conditions=[]
+    query_conditions=[models.Product.available==True]
 
     # Handle keyword search
     if kwd:
@@ -59,6 +59,8 @@ async def get_products(kwd: Optional[str] = None,
             base_query = base_query.order_by(asc(models.Product.created_at))
         elif sortby == "date_desc":
             base_query = base_query.order_by(desc(models.Product.created_at))
+        elif sortby == "views":
+            base_query = base_query.order_by(desc(models.Product.views))
 
     products = (
         base_query
