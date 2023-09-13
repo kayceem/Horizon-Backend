@@ -15,22 +15,12 @@ router = APIRouter(
 async def get_products(user_id: Optional[int] = None,
                        limit: int = 20,
                        skip:int = 0,
-                       search:Optional[str]="", 
                        db: Session = Depends(get_db),
-                       current_user:Optional[dict] = Depends(oauth2.get_optional_current_user)
+                       current_user= Depends(oauth2.get_optional_current_user)
                        ):
 
-    query_conditions=[models.Product.name.contains(search)]
-    if user_id:
-        user = utils.check_user(db=db, id=user_id)
-        query_conditions.append(models.Product.user_id == user_id)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    
     products = (
                 db.query(models.Product)
-                .filter(and_(*query_conditions))
                 .limit(limit=limit)
                 .offset(skip)
                 .all()
