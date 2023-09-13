@@ -1,7 +1,7 @@
 from database import get_db
 from typing import List, Optional, Union
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 import schemas, models, oauth2, utils
 from fastapi import Depends, status, HTTPException, APIRouter, UploadFile, File
 
@@ -21,6 +21,8 @@ async def get_products(user_id: Optional[int] = None,
 
     products = (
                 db.query(models.Product)
+                .filter(models.Product.available==True)
+                .order_by(desc(models.Product.views))
                 .limit(limit=limit)
                 .offset(skip)
                 .all()
@@ -40,7 +42,7 @@ async def get_product(id,
                        db: Session = Depends(get_db),
                        current_user = Depends(oauth2.get_optional_current_user)
                        ):
-    product = db.query(models.Product).filter(models.Product.id == id).first()
+    product = db.query(models.Product).filter(and_(models.Product.id == id, models.Product.available==True)).first()
 
         
     if not product:

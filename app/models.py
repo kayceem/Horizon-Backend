@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import  text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
-from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, BigInteger, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, BigInteger, Text, Boolean
 
 
 
@@ -46,6 +46,7 @@ class Product(Base):
     price = Column(Numeric(10,2), nullable=False)
     image_url = Column(String(255))
     views = Column(Integer, default=0)
+    available = Column(Boolean, unique=False, default=True)
     ############ many products to one user or category ############
     user = relationship('User', backref=backref('product', cascade='all, delete-orphan'))
     category = relationship('Category', backref='product')

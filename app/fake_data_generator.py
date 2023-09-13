@@ -47,7 +47,8 @@ def create_products(session, n=50,sleep=0):
             description=fake.text(),
             price=round(random.uniform(1, 1000), 2),
             image_url=fake.image_url(),
-            views=random.randint(0, 1000)
+            views=random.randint(0, 1000),
+            available=bool(random.randint(0,1))
         )
         session.add(product)
         session.commit()

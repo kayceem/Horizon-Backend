@@ -63,6 +63,7 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     category_id: Optional[int] = None
     image_url:Optional[str]=None
+    available:Optional[bool]=True
 
 
 class ProductCreate(ProductBase):
