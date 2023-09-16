@@ -20,9 +20,9 @@ def login(user_credentials:OAuth2PasswordRequestForm = Depends(), db:Session = D
                 models.User.username==user_credentials.username)
             ).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     if not utils.verify(user_credentials.password, user.password):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     # Creating a JWT Token
     token = oauth2.create_token(data={"user_id":user.id,"username":user.username})
     
