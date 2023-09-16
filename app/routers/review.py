@@ -23,8 +23,6 @@ def get_received_reviews(db: Session = Depends(get_db),
                         .order_by(desc(models.Review.created_at))
                         .all()
                         )
-    if not received_reviews:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No reviews received yet")
     return received_reviews
 
 @router.get("/received/{user_id}", response_model=List[schemas.ReviewResponse])
@@ -51,8 +49,6 @@ def get_given_reviews(db: Session = Depends(get_db),
                      .order_by(desc(models.Review.created_at))
                      .all()
                      )
-    if not given_reviews:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No reviews given yet")
     return given_reviews
 
 @router.post("/", response_model=schemas.ReviewResponse)
