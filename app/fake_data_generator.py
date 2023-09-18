@@ -75,6 +75,8 @@ def create_messages(session, n=50, sleep=0):
 
     for _ in range(n):
         sender, receiver = random.sample(users, 2)
+        if(sender==receiver):
+            continue
         message = models.Message(
             sender_id=sender.id,
             receiver_id=receiver.id,
@@ -111,8 +113,8 @@ def generate_data(session, sleep):
     create_categories(session,10)
     create_products(session,30, sleep)
     create_reviews(session, 15, sleep)
-    create_messages(session,80), sleep
+    create_messages(session,80,sleep)
     create_wishlist_items(session, 35, sleep)
 
 with database.SessionLocal() as session:
-    generate_data(session, sleep=0.2)
+    generate_data(session, sleep=0.5)
