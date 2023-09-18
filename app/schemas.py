@@ -95,7 +95,7 @@ class WishListItemResponse(BaseModel):
         orm_mode = True 
         
 class MessageCreate(BaseModel):
-    receiver_id: int
+    receiver_username: str
     content: str
 
 class MessageResponse(BaseModel):

@@ -96,11 +96,11 @@ def send_message(message: schemas.MessageCreate,
                  db: Session = Depends(get_db),
                  current_user = Depends(oauth2.get_current_user)
                  ):
-    receiver = db.query(models.User).filter(models.User.id == message.receiver_id).first()
+    receiver = db.query(models.User).filter(models.User.username == message.receiver_username).first()
     if not receiver:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Receiver not found")
 
-    new_message = models.Message(sender_id=current_user.id, receiver_id=message.receiver_id, content=message.content)
+    new_message = models.Message(sender_id=current_user.id, receiver_id=receiver.id, content=message.content)
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
