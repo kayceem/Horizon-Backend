@@ -26,7 +26,6 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
                     ).group_by(
                         "user_id"
                     ).subquery()
-    join_id = models.Message.sender_id if models.Message.sender_id != current_user.id else models.Message.receiver_id
     latest_messages = db.query(models.Message, models.User.username).join(
                     subquery,
                     or_(
@@ -55,12 +54,13 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
     return response_data
 
 # Get messages with user 
-@router.get("/chat/{user_id}", response_model=List[schemas.MessageResponse])
-def get_chat_with_user(user_id: int,
+@router.get("/chat/{username}", response_model=List[schemas.MessageResponse])
+def get_chat_with_user(username: str,
                        skip:int=0,
                        db: Session = Depends(get_db),
                        current_user=Depends(oauth2.get_current_user)
                        ):
+    user_id= db.query(models.User).filter(models.User.username==username).first().id
     messages = (db.query(models.Message, models.User.username)
         .join(
             models.User,
