@@ -15,14 +15,19 @@ router = APIRouter(
 async def get_products(user_id: Optional[int] = None,
                        limit: int = 20,
                        skip:int = 0,
+                       sortby:str = None,
                        db: Session = Depends(get_db),
                        current_user= Depends(oauth2.get_optional_current_user)
                        ):
 
+    sortedBy = models.Product.views 
+    if sortby=="latest":
+        sortedBy = models.Product.created_at 
+
     products = (
                 db.query(models.Product)
                 .filter(models.Product.available==True)
-                .order_by(desc(models.Product.views))
+                .order_by(desc(sortedBy))
                 .limit(limit=limit)
                 .offset(skip)
                 .all()
