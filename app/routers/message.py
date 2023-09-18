@@ -26,16 +26,33 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
                     ).group_by(
                         "user_id"
                     ).subquery()
-
-    latest_messages = db.query(models.Message).join(
+    join_id = models.Message.sender_id if models.Message.sender_id != current_user.id else models.Message.receiver_id
+    latest_messages = db.query(models.Message, models.User.username).join(
                     subquery,
                     or_(
                         (models.Message.sender_id == current_user.id) & (models.Message.receiver_id == subquery.c.user_id),
                         (models.Message.receiver_id == current_user.id) & (models.Message.sender_id == subquery.c.user_id)
                     ) &
                     (models.Message.created_at == subquery.c.latest_created_at)
-                ).order_by(desc(models.Message.created_at)).limit(20).all()
-    return latest_messages
+                ).join(
+                    models.User,
+                     or_(
+                        (models.Message.sender_id == models.User.id) & (models.Message.sender_id != current_user.id),
+                        (models.Message.receiver_id == models.User.id) & (models.Message.receiver_id != current_user.id),
+                    )
+                ).order_by(desc(models.Message.created_at)).all()
+    response_data = [
+        schemas.MessageResponse(
+            id=message.id,
+            sender_id=message.sender_id,
+            receiver_id=message.receiver_id,
+            content=message.content,
+            created_at=message.created_at,
+            username=username 
+        )
+        for message, username in latest_messages
+    ]
+    return response_data
 
 # Get messages with user 
 @router.get("/chat/{user_id}", response_model=List[schemas.MessageResponse])
@@ -44,11 +61,33 @@ def get_chat_with_user(user_id: int,
                        db: Session = Depends(get_db),
                        current_user=Depends(oauth2.get_current_user)
                        ):
-    messages = db.query(models.Message).filter(
-        (models.Message.sender_id == current_user.id) & (models.Message.receiver_id == user_id) |
-        (models.Message.sender_id == user_id) & (models.Message.receiver_id == current_user.id)
-    ).order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
-    return messages
+    messages = (db.query(models.Message, models.User.username)
+        .join(
+            models.User,
+            or_(
+                (models.Message.sender_id == models.User.id) & (models.Message.sender_id != current_user.id),
+                (models.Message.receiver_id == models.User.id) & (models.Message.receiver_id != current_user.id),
+            )
+        )
+        .filter(
+            (models.Message.sender_id == current_user.id) & (models.Message.receiver_id == user_id) |
+            (models.Message.sender_id == user_id) & (models.Message.receiver_id == current_user.id)
+        )
+        .order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
+    )
+
+    response_data = [
+        schemas.MessageResponse(
+            id=message.id,
+            sender_id=message.sender_id,
+            receiver_id=message.receiver_id,
+            content=message.content,
+            created_at=message.created_at,
+            username=username 
+        )
+        for message, username in messages
+    ]
+    return response_data
 
 
 
@@ -65,4 +104,12 @@ def send_message(message: schemas.MessageCreate,
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
-    return new_message
+    response_data = schemas.MessageResponse(
+            id=new_message.id,
+            sender_id=new_message.sender_id,
+            receiver_id=new_message.receiver_id,
+            content=new_message.content,
+            created_at=new_message.created_at,
+            username=receiver.username 
+        )
+    return response_data

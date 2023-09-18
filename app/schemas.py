@@ -100,6 +100,7 @@ class MessageCreate(BaseModel):
 
 class MessageResponse(BaseModel):
     id: int
+    username:str
     sender_id: int
     receiver_id: int
     content: str
