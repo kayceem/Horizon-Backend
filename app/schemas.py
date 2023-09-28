@@ -105,6 +105,7 @@ class MessageResponse(BaseModel):
     receiver_id: int
     content: str
     created_at: datetime
+    sent:bool
 
     class Config:
         orm_mode = True
@@ -128,5 +129,11 @@ class ReviewResponse(BaseModel):
     comment: Optional[str]
     created_at: datetime
 
+    class Config:
+        orm_mode = True
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
     class Config:
         orm_mode = True
