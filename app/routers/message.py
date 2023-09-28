@@ -45,6 +45,7 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
             id=message.id,
             sender_id=message.sender_id,
             receiver_id=message.receiver_id,
+            sent=True if message.sender_id == current_user.id else False,
             content=message.content,
             created_at=message.created_at,
             username=username 
@@ -81,6 +82,7 @@ def get_chat_with_user(username: str,
             id=message.id,
             sender_id=message.sender_id,
             receiver_id=message.receiver_id,
+            sent=True if message.sender_id == current_user.id else False,
             content=message.content,
             created_at=message.created_at,
             username=username 
@@ -108,6 +110,7 @@ def send_message(message: schemas.MessageCreate,
             id=new_message.id,
             sender_id=new_message.sender_id,
             receiver_id=new_message.receiver_id,
+            sent=True if new_message.sender_id == current_user.id else False,
             content=new_message.content,
             created_at=new_message.created_at,
             username=receiver.username 
