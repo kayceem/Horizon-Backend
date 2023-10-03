@@ -24,6 +24,7 @@ async def get_products(kwd: Optional[str] = None,
                        skip:int = 0,
                        sortby: Optional[str] = None,
                        c_id: Optional[int]=None,
+                       condition: Optional[str] = None,
                        db: Session = Depends(get_db),
                        current_user = Depends(oauth2.get_optional_current_user)
                        ):
@@ -37,7 +38,8 @@ async def get_products(kwd: Optional[str] = None,
         keyword_desc_filters = [models.Product.description.contains(f"%{keyword}%") for keyword in keywords]
         query_conditions.append(or_(*keyword_name_filters, *keyword_desc_filters))
 
-
+    if condition:
+        query_conditions.append(models.Product.condition==condition)
     # Handle price range filtering
     if min_price is not None:
         query_conditions.append(models.Product.price >= min_price)

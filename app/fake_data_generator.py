@@ -38,6 +38,7 @@ def create_categories(session, n=10):
 def create_products(session, n=50,sleep=0):
     users = session.query(models.User).all()
     categories = session.query(models.Category).all()
+    conditions = ['Brand new','Like new','Used','Not Working','Digital Product','Unspecified']
 
     for _ in range(n):
         product = models.Product(
@@ -48,7 +49,8 @@ def create_products(session, n=50,sleep=0):
             price=round(random.uniform(1, 1000), 2),
             image_url=fake.image_url(),
             views=random.randint(0, 1000),
-            available=bool(random.randint(0,1))
+            available=bool(random.randint(0,1)),
+            condition = random.choice(conditions)
         )
         session.add(product)
         session.commit()

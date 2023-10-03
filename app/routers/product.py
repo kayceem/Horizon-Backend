@@ -21,18 +21,23 @@ async def get_products(user_id: Optional[int] = None,
                        current_user= Depends(oauth2.get_optional_current_user)
                        ):
     query_conditions = []
+    if sortby=="latest":
+        sortedBy = [models.Product.created_at] 
+    else:
+        sortedBy = [models.Product.views] 
     if not all:
         query_conditions.append(models.Product.available==True)
+    else:
+        sortedBy.append(models.Product.available)
+
     if user_id:
         query_conditions.append(models.Product.user_id==user_id)
-    sortedBy = models.Product.views 
-    if sortby=="latest":
-        sortedBy = models.Product.created_at 
+
 
     products = (
                 db.query(models.Product)
                 .filter(and_(*query_conditions))
-                .order_by(desc(sortedBy))
+                .order_by(desc(and_(*sortedBy)))
                 .limit(limit=limit)
                 .offset(skip)
                 .all()

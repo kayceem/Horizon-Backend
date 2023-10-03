@@ -27,7 +27,7 @@ def get_wishlist(current_user=Depends(oauth2.get_current_user)):
                 user= wish_list_item.product.user,
                 condition=wish_list_item.product.condition,
                 wishlisted= True
-    ) for wish_list_item in current_user.wish_list_items]
+    ) for wish_list_item in current_user.wish_list_items if wish_list_item.product.available == True]
     return response
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
