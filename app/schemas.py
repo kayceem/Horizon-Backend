@@ -58,7 +58,7 @@ class TokenData(BaseModel):
 
 
 class ProductBase(BaseModel):
-    name: str = Field(min_length=3, max_length=25)
+    name: str = Field(min_length=3, max_length=255)
     price: float
     description: Optional[str] = None
     category_id: Optional[int] = None
@@ -93,10 +93,8 @@ class ProductResponseNoUser(ProductBase):
 class WishListItem(BaseModel):
     product_id:int
         
-class WishListItemResponse(BaseModel):
-    product:ProductResponseNoUser
-    class Config:
-        orm_mode = True 
+class WishListItemResponse(ProductResponse):
+    pass
         
 class MessageCreate(BaseModel):
     receiver_username: str

@@ -16,10 +16,13 @@ async def get_products(user_id: Optional[int] = None,
                        limit: int = 20,
                        skip:int = 0,
                        sortby:str = None,
+                       all:bool = False,
                        db: Session = Depends(get_db),
                        current_user= Depends(oauth2.get_optional_current_user)
                        ):
-    query_conditions = [models.Product.available==True]
+    query_conditions = []
+    if not all:
+        query_conditions.append(models.Product.available==True)
     if user_id:
         query_conditions.append(models.Product.user_id==user_id)
     sortedBy = models.Product.views 
@@ -118,7 +121,7 @@ async def create_product(product: schemas.ProductCreate,
     return new_product
 
 # Update product listing
-@router.put('/{id}', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductResponse)
+@router.put('/{id}', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductCreateResponse)
 async def update_product(id: int,
                          updated_product: schemas.ProductCreate,
                          db: Session = Depends(get_db),
