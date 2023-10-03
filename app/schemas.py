@@ -5,7 +5,7 @@ import re
 
 
 class UserBase(BaseModel):
-    username:str = Field(min_length=4, max_length=15)
+    username:str = Field(min_length=4, max_length=25)
     first_name: Optional[str] = None
     last_name: Optional[str] = None
 
@@ -58,7 +58,7 @@ class TokenData(BaseModel):
 
 
 class ProductBase(BaseModel):
-    name: str = Field(min_length=3, max_length=255)
+    name: str = Field(min_length=3, max_length=25)
     price: float
     description: Optional[str] = None
     category_id: Optional[int] = None
@@ -70,16 +70,18 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
-class ProductResponse(ProductBase):
+class ProductCreateResponse(ProductBase):
     id: int
     user_id: int
     views:int
     user: UserBase
-    wishlisted: bool
-
     
     class Config:
         orm_mode = True
+
+class ProductResponse(ProductCreateResponse):
+    wishlisted: bool
+
 
 class ProductResponseNoUser(ProductBase):
     id: int

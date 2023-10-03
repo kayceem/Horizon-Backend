@@ -45,7 +45,7 @@ async def get_products(user_id: Optional[int] = None,
         )
         response = [
             schemas.ProductResponse(
-                name=product.description,
+                name=product.name,
                 price=product.price,
                 description=product.description,
                 category_id=product.category_id,
@@ -81,7 +81,7 @@ async def get_product(id,
             .all()
         )
         response = schemas.ProductResponse(
-                name=product.description,
+                name=product.name,
                 price=product.price,
                 description=product.description,
                 category_id=product.category_id,
@@ -105,7 +105,7 @@ async def get_product(id,
 
 
 # Create product listing
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductResponse)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.ProductCreateResponse)
 async def create_product(product: schemas.ProductCreate,
                          db: Session = Depends(get_db),
                          current_user = Depends(oauth2.get_current_user)
