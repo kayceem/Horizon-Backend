@@ -64,6 +64,7 @@ class ProductBase(BaseModel):
     category_id: Optional[int] = None
     image_url:Optional[str]=None
     available:Optional[bool]=True
+    condition:Optional[str]=None
 
 
 class ProductCreate(ProductBase):
@@ -74,6 +75,7 @@ class ProductResponse(ProductBase):
     user_id: int
     views:int
     user: UserBase
+    wishlisted: bool
 
     
     class Config:

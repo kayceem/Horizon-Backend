@@ -47,6 +47,7 @@ class Product(Base):
     image_url = Column(String(255))
     views = Column(Integer, default=0)
     available = Column(Boolean, unique=False, default=True)
+    condition = Column(String(255), unique=False)
     ############ many products to one user or category ############
     user = relationship('User', backref=backref('product', cascade='all, delete-orphan'))
     category = relationship('Category', backref='product')

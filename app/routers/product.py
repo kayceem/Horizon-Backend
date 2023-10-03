@@ -19,14 +19,16 @@ async def get_products(user_id: Optional[int] = None,
                        db: Session = Depends(get_db),
                        current_user= Depends(oauth2.get_optional_current_user)
                        ):
-
+    query_conditions = [models.Product.available==True]
+    if user_id:
+        query_conditions.append(models.Product.user_id==user_id)
     sortedBy = models.Product.views 
     if sortby=="latest":
         sortedBy = models.Product.created_at 
 
     products = (
                 db.query(models.Product)
-                .filter(models.Product.available==True)
+                .filter(and_(*query_conditions))
                 .order_by(desc(sortedBy))
                 .limit(limit=limit)
                 .offset(skip)
@@ -36,7 +38,26 @@ async def get_products(user_id: Optional[int] = None,
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No products not found")
     if current_user:
-        response = [schemas.ProductResponse.from_orm(product) for product in products]
+        wish_listed_items = (
+            db.query(models.WishListItem)
+            .filter(models.WishListItem.user_id==current_user.id)
+            .all()
+        )
+        response = [
+            schemas.ProductResponse(
+                name=product.description,
+                price=product.price,
+                description=product.description,
+                category_id=product.category_id,
+                image_url=product.image_url,
+                available=product.available,
+                id= product.id,
+                user_id= product.user_id,
+                views=product.views,
+                user= product.user,
+                condition=product.condition,
+                wishlisted= True if product.id in [item.product_id for item in wish_listed_items] else False
+        ) for product in products]
     else:
         response = [schemas.ProductResponseNoUser.from_orm(product) for product in products]
     return response
@@ -54,7 +75,25 @@ async def get_product(id,
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No product not found")
     if current_user:
-        response = schemas.ProductResponse.from_orm(product)
+        wish_listed_items = (
+            db.query(models.WishListItem)
+            .filter(models.WishListItem.user_id==current_user.id)
+            .all()
+        )
+        response = schemas.ProductResponse(
+                name=product.description,
+                price=product.price,
+                description=product.description,
+                category_id=product.category_id,
+                image_url=product.image_url,
+                available=product.available,
+                id= product.id,
+                user_id= product.user_id,
+                views=product.views,
+                user= product.user,
+                condition=product.condition,
+                wishlisted= True if product.id in [item.product_id for item in wish_listed_items] else False
+        ) 
     else:
         response = schemas.ProductResponseNoUser.from_orm(product)
         

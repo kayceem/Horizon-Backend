@@ -111,10 +111,10 @@ def create_wishlist_items(session, n=50, sleep=0):
 def generate_data(session, sleep):
     create_users(session, 10, sleep)
     create_categories(session,10)
-    create_products(session,30, sleep)
-    create_reviews(session, 15, sleep)
-    create_messages(session,80,sleep)
-    create_wishlist_items(session, 35, sleep)
+    create_products(session,30, 1)
+    create_reviews(session, 15, 1)
+    create_messages(session,80,2)
+    create_wishlist_items(session, 35, 1)
 
 with database.SessionLocal() as session:
     generate_data(session, sleep=0.5)
