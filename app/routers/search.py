@@ -18,8 +18,8 @@ router = APIRouter(
 # Search products
 @router.get('/', response_model=List[Union[schemas.ProductResponse, schemas.ProductResponseNoUser]])
 async def get_products(kwd: Optional[str] = None,
-                       min_price: Optional[int]=None,
-                       max_price: Optional[int]=None,
+                       min_price: Optional[float]=None,
+                       max_price: Optional[float]=None,
                        limit: int = 20,
                        skip:int = 0,
                        sortby: Optional[str] = None,
