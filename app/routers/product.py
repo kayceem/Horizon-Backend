@@ -13,7 +13,7 @@ router = APIRouter(
 # Get products
 @router.get('/', response_model=List[Union[schemas.ProductResponse, schemas.ProductResponseNoUser]])
 async def get_products(user_id: Optional[int] = None,
-                       limit: int = 20,
+                       limit: int = 18,
                        skip:int = 0,
                        sortby:str = None,
                        all:bool = False,
