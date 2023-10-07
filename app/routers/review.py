@@ -25,7 +25,7 @@ def get_received_reviews(db: Session = Depends(get_db),
                         )
     return received_reviews
 
-@router.get("/received/{user_id}", response_model=List[schemas.ReviewResponse])
+@router.get("/received/{user_id}", response_model=List[schemas.ReviewResponseProfile])
 def get_received_reviews_user(user_id:int,
                               db: Session = Depends(get_db),
                               current_user=Depends(oauth2.get_current_user)
@@ -38,6 +38,20 @@ def get_received_reviews_user(user_id:int,
                         .order_by(desc(models.Review.created_at))
                         .all()
                         )
+    users = db.query(models.User).all()
+
+    received_reviews = [
+        schemas.ReviewResponseProfile(
+            id = review.id,
+            reviewer_id = review.reviewer_id,
+            reviewee_id = review.reviewee_id,
+            rating = review.rating,
+            comment = review.comment,
+            created_at = review.created_at,
+             reviewer_username=(next(user.username for user in users if user.id == review.reviewer_id))
+            ) 
+            for review in received_reviews
+    ]
     return received_reviews
 
 @router.get("/given", response_model=List[schemas.ReviewResponse])
@@ -67,4 +81,3 @@ def create_review(review: schemas.ReviewCreate,
     db.commit()
     db.refresh(new_review)
     return new_review
-        

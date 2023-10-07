@@ -48,6 +48,7 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
             sent=True if message.sender_id == current_user.id else False,
             content=message.content,
             created_at=message.created_at,
+            read= message.read,
             username=username 
         )
         for message, username in latest_messages
@@ -61,7 +62,10 @@ def get_chat_with_user(username: str,
                        db: Session = Depends(get_db),
                        current_user=Depends(oauth2.get_current_user)
                        ):
-    user_id= db.query(models.User).filter(models.User.username==username).first().id
+    user= db.query(models.User).filter(models.User.username==username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    user_id= user.id
     messages = (db.query(models.Message, models.User.username)
         .join(
             models.User,
@@ -77,6 +81,12 @@ def get_chat_with_user(username: str,
         .order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
     )
 
+    for message, username in messages:
+        if message.sender_id == current_user.id: 
+            break
+        message.read = True
+    db.commit()
+    
     response_data = [
         schemas.MessageResponse(
             id=message.id,
@@ -85,10 +95,12 @@ def get_chat_with_user(username: str,
             sent=True if message.sender_id == current_user.id else False,
             content=message.content,
             created_at=message.created_at,
+            read= message.read,
             username=username 
         )
         for message, username in messages
     ]
+
     return response_data
 
 
@@ -113,6 +125,7 @@ def send_message(message: schemas.MessageCreate,
             sent=True if new_message.sender_id == current_user.id else False,
             content=new_message.content,
             created_at=new_message.created_at,
-            username=receiver.username 
+            username=receiver.username ,
+            read=new_message.read
         )
     return response_data

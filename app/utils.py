@@ -1,5 +1,5 @@
 import models
-from sqlalchemy.sql.expression import or_
+from sqlalchemy.sql.expression import or_, desc
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -43,3 +43,14 @@ def check_conflicts(db: Session,
     if existing_user.contact_number == contact_number:
         conflict['contact_number'] = contact_number
     return conflict
+
+def get_rating(user_id, 
+               db:Session
+               ):
+    received_reviews = (db.query(models.Review)
+                        .filter(models.Review.reviewee_id == user_id)
+                        .order_by(desc(models.Review.created_at))
+                        .all()
+                    )       
+    average_rating = sum(review.rating for review in received_reviews) / len(received_reviews) if received_reviews else 0.0
+    return round(average_rating,1)

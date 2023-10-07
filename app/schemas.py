@@ -2,7 +2,29 @@ from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional
 from datetime import datetime
 import re
+from fastapi.param_functions import Form
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
+
+class UserChangePassword(OAuth2PasswordRequestForm):
+        username: str = Form(),
+        password: str = Form(),
+        new_password: str = Form(),
+        def __init__(
+            self,
+            username: str = Form(),
+            password: str = Form(),
+            new_password: str = Form(),
+    ):
+            self.username = username
+            self.password = password
+            self.new_password = new_password
+
+        @validator('new_password')
+        def validate_password(cls, v):
+            if not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]', v):
+                raise ValueError('Password must contain at least one uppercase letter, one digit, and one special character')
+            return v
 
 class UserBase(BaseModel):
     username:str = Field(min_length=4, max_length=25)
@@ -41,6 +63,21 @@ class UserResponse(UserBase):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
+    rating: Optional[str]
+
+class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: EmailStr
+    contact_number: int
+    @validator('contact_number')
+    def validate_contact_number(cls, v):
+        if len(str(v)) != 10:
+            raise ValueError('Contact number must be a 10-digit integer')
+        return v
+
+class UserResponseLoggedIn(UserResponse):
+    contact_number: int
 
         
 class UserLogin(BaseModel):
@@ -108,6 +145,7 @@ class MessageResponse(BaseModel):
     content: str
     created_at: datetime
     sent:bool
+    read:bool
 
     class Config:
         orm_mode = True
@@ -133,6 +171,8 @@ class ReviewResponse(BaseModel):
 
     class Config:
         orm_mode = True
+class ReviewResponseProfile(ReviewResponse):
+    reviewer_username: str
 
 class CategoryResponse(BaseModel):
     id: int

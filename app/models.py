@@ -64,6 +64,7 @@ class Message(Base):
     sender = relationship('User', foreign_keys=[sender_id], backref=backref('sent_messages', cascade='all, delete-orphan'))
     receiver = relationship('User', foreign_keys=[receiver_id], backref=backref('received_messages', cascade='all, delete-orphan'))
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
+    read = Column(Boolean, unique=False, default=False)
 
 class Review(Base):
     __tablename__ = 'review'
