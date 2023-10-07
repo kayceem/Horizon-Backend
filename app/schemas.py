@@ -58,6 +58,7 @@ class UserCreate(UserBase):
             raise ValueError('Password must contain at least one uppercase letter, one digit, and one special character')
         return v
 
+
 class UserResponse(UserBase):
     id: int
     email: EmailStr
@@ -111,7 +112,7 @@ class ProductCreateResponse(ProductBase):
     id: int
     user_id: int
     views:int
-    user: UserBase
+    user: UserResponse
     
     class Config:
         orm_mode = True
@@ -131,7 +132,8 @@ class WishListItem(BaseModel):
     product_id:int
         
 class WishListItemResponse(ProductResponse):
-    pass
+    created_at: datetime
+
         
 class MessageCreate(BaseModel):
     receiver_username: str
@@ -139,6 +141,8 @@ class MessageCreate(BaseModel):
 
 class MessageResponse(BaseModel):
     id: int
+    first_name:str
+    last_name:str
     username:str
     sender_id: int
     receiver_id: int

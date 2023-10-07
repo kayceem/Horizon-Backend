@@ -90,6 +90,8 @@ async def get_product(id,
             .filter(models.WishListItem.user_id==current_user.id)
             .all()
         )
+        user = schemas.UserResponse.from_orm(product.user).dict()
+        user['rating'] = utils.get_rating(user['id'], db)
         response = schemas.ProductResponse(
                 name=product.name,
                 price=product.price,
@@ -100,7 +102,7 @@ async def get_product(id,
                 id= product.id,
                 user_id= product.user_id,
                 views=product.views,
-                user= product.user,
+                user= schemas.UserResponse(**user),
                 condition=product.condition,
                 wishlisted= True if product.id in [item.product_id for item in wish_listed_items] else False
         ) 

@@ -5,6 +5,7 @@ import schemas
 import models
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
+from operator import attrgetter
 
 router = APIRouter(
     prefix='/wishlist',
@@ -14,6 +15,8 @@ router = APIRouter(
 
 @router.get('/', response_model=List[schemas.WishListItemResponse])
 def get_wishlist(current_user=Depends(oauth2.get_current_user)):
+    wishlist_items = [wishlist_item for wishlist_item in current_user.wish_list_items if wishlist_item.product.available]
+    sorted_wishlist_items = sorted(wishlist_items, key=attrgetter('created_at'), reverse=True)
     response =[ schemas.WishListItemResponse(
           name=wish_list_item.product.name,
                 price=wish_list_item.product.price,
@@ -26,8 +29,9 @@ def get_wishlist(current_user=Depends(oauth2.get_current_user)):
                 views=wish_list_item.product.views,
                 user= wish_list_item.product.user,
                 condition=wish_list_item.product.condition,
+                created_at= wish_list_item.created_at,
                 wishlisted= True
-    ) for wish_list_item in current_user.wish_list_items if wish_list_item.product.available == True]
+    ) for wish_list_item in sorted_wishlist_items]
     return response
 
 @router.post('/', status_code=status.HTTP_201_CREATED)

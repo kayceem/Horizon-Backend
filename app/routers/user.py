@@ -26,7 +26,7 @@ async def get_users(db: Session = Depends(get_db)):
 
 # Get user with id
 @router.get('/{user_id}', response_model=schemas.UserResponse)
-async def get_user_by_id(user_id: int,
+async def get_user_by_id(user_id: str,
                    db: Session = Depends(get_db), 
                    current_user: models.User = Depends(oauth2.get_current_user)):
     user = utils.check_user(db=db, id=user_id)
@@ -38,6 +38,7 @@ async def get_user_by_id(user_id: int,
     user['updated_at'] =user['updated_at'].isoformat()
     user['rating'] = utils.get_rating(user['id'], db)
     return user
+
 
 
 # Create user

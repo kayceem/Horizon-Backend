@@ -28,5 +28,4 @@ async def upload_image(image: Optional[UploadFile] = File(None),
     file_location = f"./app/static/images/{file_name}"
     img_webp = img.convert("RGB")
     img_webp.save(file_location, "WebP")
-    print(file_name)
     return {"success": True, "image_url":f"static/{file_name}"}

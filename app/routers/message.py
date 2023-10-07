@@ -26,7 +26,7 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
                     ).group_by(
                         "user_id"
                     ).subquery()
-    latest_messages = db.query(models.Message, models.User.username).join(
+    latest_messages = db.query(models.Message, models.User).join(
                     subquery,
                     or_(
                         (models.Message.sender_id == current_user.id) & (models.Message.receiver_id == subquery.c.user_id),
@@ -49,9 +49,11 @@ def get_inbox(db: Session = Depends(get_db), current_user=Depends(oauth2.get_cur
             content=message.content,
             created_at=message.created_at,
             read= message.read,
-            username=username 
+            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name
         )
-        for message, username in latest_messages
+        for message, user in latest_messages
     ]
     return response_data
 
@@ -66,7 +68,7 @@ def get_chat_with_user(username: str,
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     user_id= user.id
-    messages = (db.query(models.Message, models.User.username)
+    messages = (db.query(models.Message, models.User)
         .join(
             models.User,
             or_(
@@ -81,7 +83,7 @@ def get_chat_with_user(username: str,
         .order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
     )
 
-    for message, username in messages:
+    for message, _ in messages:
         if message.sender_id == current_user.id: 
             break
         message.read = True
@@ -96,9 +98,11 @@ def get_chat_with_user(username: str,
             content=message.content,
             created_at=message.created_at,
             read= message.read,
-            username=username 
+            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name
         )
-        for message, username in messages
+        for message, user in messages
     ]
 
     return response_data
@@ -126,6 +130,8 @@ def send_message(message: schemas.MessageCreate,
             content=new_message.content,
             created_at=new_message.created_at,
             username=receiver.username ,
+            first_name=receiver.first_name,
+            last_name=receiver.last_name,
             read=new_message.read
         )
     return response_data

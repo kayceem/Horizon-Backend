@@ -11,8 +11,9 @@ def hash(passwd:str):
 def verify(passwd, hashed_passwd):
     return passwd_context.verify(passwd,hashed_passwd)
 
-def check_user(db:Session, id:int):
-    user = db.query(models.User).filter(models.User.id == id).first()
+def check_user(db:Session, id:str):
+    user = db.query(models.User).filter(or_(models.User.id == id,
+                                            models.User.username == id)).first()
     return user
         
 def check_conflicts(db: Session,
