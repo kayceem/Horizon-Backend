@@ -46,7 +46,7 @@ async def get_products(user_id: Optional[int] = None,
                 )
     if not products:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No products not found")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No products found")
     if current_user:
         wish_listed_items = (
             db.query(models.WishListItem)
@@ -83,7 +83,7 @@ async def get_product(id,
         
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No product not found")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No product found")
     if current_user:
         wish_listed_items = (
             db.query(models.WishListItem)

@@ -108,6 +108,17 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+class AdCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=255)
+    provider: str
+    sub_title: Optional[str] = None
+    image_url:str
+class AdResponse(AdCreate):
+    id :int
+    created_at : datetime
+    class Config:
+        orm_mode = True
+
 class ProductCreateResponse(ProductBase):
     id: int
     user_id: int

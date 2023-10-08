@@ -3,7 +3,7 @@ from database import engine
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routers import auth, message, user, product, wish_list, review, image, search, category
+from routers import auth, message, user, product, wish_list, review, image, search, category, ad
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
@@ -31,6 +31,7 @@ router.include_router(review.router)
 router.include_router(image.router)
 router.include_router(search.router)
 router.include_router(category.router)
+router.include_router(ad.router)
 
 @router.get('/')    
 async def home():
