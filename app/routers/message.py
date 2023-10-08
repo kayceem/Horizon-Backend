@@ -80,7 +80,8 @@ def get_chat_with_user(username: str,
             (models.Message.sender_id == current_user.id) & (models.Message.receiver_id == user_id) |
             (models.Message.sender_id == user_id) & (models.Message.receiver_id == current_user.id)
         )
-        .order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
+        .order_by(desc(models.Message.created_at)).all()
+        # .order_by(desc(models.Message.created_at)).limit(20).offset(skip).all()
     )
 
     for message, _ in messages:
