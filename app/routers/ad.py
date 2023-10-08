@@ -39,3 +39,20 @@ async def create_ad(ad: schemas.AdCreate,
     db.commit()
     db.refresh(new_ad)
     return new_ad
+
+# Delete ad listing
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_ad(id: int,
+                      db: Session = Depends(get_db),
+                      current_user = Depends(oauth2.get_current_user)
+                      ):
+
+    ad_query = db.query(models.Ad).filter(
+        (models.Ad.id == id))
+    ad = ad_query.first()
+    if not ad:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+
+    ad.delete(synchronize_session=False)
+    db.commit()
