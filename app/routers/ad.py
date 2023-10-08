@@ -29,7 +29,7 @@ async def get_ads(
     return ads
 
 # Create ad listing
-@router.post('/create/', status_code=status.HTTP_201_CREATED, response_model=schemas.AdResponse)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.AdResponse)
 async def create_ad(ad: schemas.AdCreate,
                          db: Session = Depends(get_db),
                          current_user = Depends(oauth2.get_current_user)
