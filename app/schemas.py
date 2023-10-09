@@ -189,8 +189,10 @@ class ReviewResponse(BaseModel):
 class ReviewResponseProfile(ReviewResponse):
     reviewer_username: str
 
-class CategoryResponse(BaseModel):
-    id: int
+class CategoryCreate(BaseModel):
     name: str
+
+class CategoryResponse(CategoryCreate):
+    id: int
     class Config:
         orm_mode = True
