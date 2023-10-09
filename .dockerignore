@@ -1,0 +1,7 @@
+.env
+.git/
+.venv/
+.vscode/
+.env_template
+README.md
+__pycache__

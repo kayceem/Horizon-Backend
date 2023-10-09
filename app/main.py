@@ -4,15 +4,18 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routers import auth, message, user, product, wish_list, review, image, search, category, ad
+from config import settings
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
+
 #  Initialize FastAPI
 app = FastAPI()
+origins = settings.ALLOWED_ORIGINS.split(",")
 app.mount("/api/static", StaticFiles(directory="app/static/Images"), name="static")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -42,5 +45,7 @@ app.include_router(router)
 if __name__ == '__main__':
     uvicorn.run(
         "main:app",
-        reload=True
+        host="0.0.0.0",  # Listen on all network interfaces inside the container
+        port=8000,       # Expose the port that you have configured in Docker
+        reload=settings.DEBUG  # Enable auto-reload in development
     )
