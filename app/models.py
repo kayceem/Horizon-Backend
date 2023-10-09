@@ -88,7 +88,7 @@ class WishListItem(Base):
     product = relationship('Product', backref=backref('wish_list_items', cascade='all, delete-orphan'))
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
 
-class Ad    (Base):
+class Ad(Base):
     __tablename__ = 'ad'
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(255), nullable=False)
@@ -96,7 +96,6 @@ class Ad    (Base):
     provider = Column(String(255), nullable=False)
     image_url = Column(String(255))
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
-
 # from database import engine_
 # from sqlalchemy.schema import CreateTable
 # Base.metadata.create_all(bind=engine)

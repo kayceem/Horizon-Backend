@@ -9,10 +9,10 @@ from routers import auth, message, user, product, wish_list, review, image, sear
 models.Base.metadata.create_all(bind=engine)
 #  Initialize FastAPI
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="app/static/Images"), name="static")
+app.mount("/api/static", StaticFiles(directory="app/static/Images"), name="static")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

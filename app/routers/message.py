@@ -109,7 +109,7 @@ def get_chat_with_user(username: str,
     return response_data
 
 
-
+# Send messsage
 @router.post('/chat', response_model=schemas.MessageResponse, status_code=status.HTTP_201_CREATED)
 def send_message(message: schemas.MessageCreate,
                  db: Session = Depends(get_db),
