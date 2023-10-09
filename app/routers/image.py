@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, APIRouter, UploadFile, File
-import oauth2
+from app import oauth2
 from fastapi.responses import JSONResponse
 from typing import Optional
 from PIL import Image

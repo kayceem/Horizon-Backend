@@ -1,10 +1,11 @@
-import uvicorn, models
-from database import engine
+import uvicorn
+from app import models
+from app.database import engine
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routers import auth, message, user, product, wish_list, review, image, search, category, ad
-from config import settings
+from app.routers import auth, message, user, product, wish_list, review, image, search, category, ad
+from app.config import settings
 
 # Create all the tables
 models.Base.metadata.create_all(bind=engine)
@@ -42,10 +43,10 @@ async def home():
     
     
 app.include_router(router)
-if __name__ == '__main__':
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",  # Listen on all network interfaces inside the container
-        port=8000,       # Expose the port that you have configured in Docker
-        reload=settings.DEBUG  # Enable auto-reload in development
-    )
+# if __name__ == '__main__':
+#     uvicorn.run(
+#         "main:app",
+#         host="0.0.0.0",  # Listen on all network interfaces inside the container
+#         port=8000,       # Expose the port that you have configured in Docker
+#         reload=settings.DEBUG  # Enable auto-reload in development
+#     )

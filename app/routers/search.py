@@ -1,8 +1,8 @@
-from database import get_db
+from app.database import get_db
 from typing import List, Optional, Union
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, asc, desc, case
-import schemas, models, oauth2, utils
+from app import schemas, models, oauth2, utils
 from fastapi import Depends, status, HTTPException, APIRouter
 
 

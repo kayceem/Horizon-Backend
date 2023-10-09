@@ -1,4 +1,4 @@
-import models
+from app import models
 from sqlalchemy.sql.expression import or_, desc
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session

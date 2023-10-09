@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Session
-from database import get_db
-import schemas,utils, models
+from app.database import get_db
+from app import schemas,utils, models, oauth2
 from fastapi import Depends, status, HTTPException, APIRouter, Response
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-import oauth2
 from sqlalchemy.sql.expression import or_
 from fastapi.responses import JSONResponse
 

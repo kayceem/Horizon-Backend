@@ -1,8 +1,6 @@
-import oauth2
+from app import oauth2, schemas, models
 from typing import List
-from database import get_db
-import schemas
-import models
+from app.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
 from operator import attrgetter

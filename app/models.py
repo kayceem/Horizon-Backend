@@ -1,4 +1,4 @@
-from database import Base
+from app.database import Base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import  text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -96,7 +96,7 @@ class Ad(Base):
     provider = Column(String(255), nullable=False)
     image_url = Column(String(255))
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
-# from database import engine_
+# from app.database import engine_
 # from sqlalchemy.schema import CreateTable
 # Base.metadata.create_all(bind=engine)
 # for table in Base.metadata.sorted_tables:

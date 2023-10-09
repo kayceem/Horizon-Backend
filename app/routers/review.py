@@ -1,12 +1,9 @@
-import utils
-import oauth2
 from typing import List
-from database import get_db
-import schemas
-import utils
-import models
+from app.database import get_db
+from app import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
+from app import utils, oauth2, utils, models
 from fastapi import Depends, status, HTTPException, APIRouter, Response
 
 router = APIRouter(

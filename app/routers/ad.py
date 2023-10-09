@@ -1,8 +1,8 @@
-from database import get_db
+from app.database import get_db
 from typing import List, Optional, Union
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, desc
-import schemas, models, oauth2
+from app import schemas, models, oauth2
 from fastapi import Depends, status, HTTPException, APIRouter
 
 router = APIRouter(
