@@ -44,11 +44,13 @@ async def create_category(
 
 
 # Delete category
-@router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(  category: schemas.CategoryCreate,
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_category(  id: int,
                         db: Session = Depends(get_db),
                         current_user = Depends(oauth2.get_current_user)):
-    existing_category = db.query(models.Category).filter(models.Category.name == category.name).first()
-    if existing_category:
-        db.delete(existing_category)
-        db.commit()
+    existing_category = db.query(models.Category).filter(models.Category.id == id).first()
+    if not existing_category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+    db.delete(existing_category)
+    db.commit()
