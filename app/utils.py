@@ -31,18 +31,18 @@ def check_conflicts(db: Session,
     conflict = {}
     if current_user:
         if existing_user.username == username and current_user.username != existing_user.username:
-            conflict['username'] = username
+            conflict['msg'] = username
         if existing_user.email == email and current_user.email != existing_user.email:
-            conflict['email'] = email
+            conflict['msg'] = email
         if existing_user.contact_number == contact_number and current_user.contact_number != existing_user.contact_number:
-            conflict['contact_number'] = contact_number
+            conflict['msg'] = contact_number
         return conflict
     if existing_user.username == username:
-        conflict['username'] = username
+        conflict['msg'] = username
     if existing_user.email == email:
-        conflict['email'] = email
+        conflict['msg'] = email
     if existing_user.contact_number == contact_number:
-        conflict['contact_number'] = contact_number
+        conflict['msg'] = contact_number
     return conflict
 
 def get_rating(user_id, 

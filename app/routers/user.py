@@ -54,7 +54,7 @@ async def create_user(user: schemas.UserCreate,
 
     if conflicts:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=conflicts)
+                            detail=[conflicts])
     user.password = utils.hash(user.password)
     new_user = models.User(**user.dict())  # Unpcak dictionary
     db.add(new_user)
