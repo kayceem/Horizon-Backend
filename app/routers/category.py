@@ -36,7 +36,7 @@ async def create_category(
     if existing_category:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Category already exists')
-    new_category = models.Ad(**category.dict())
+    new_category = models.Category(**category.dict())
     db.add(new_category)
     db.commit()
     db.refresh(new_category)

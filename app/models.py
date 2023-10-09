@@ -32,7 +32,7 @@ class Category(Base):
     __tablename__ = 'category'  
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=True, nullable=False)
-    description = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True),server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),nullable=False)
 
