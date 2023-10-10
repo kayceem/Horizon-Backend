@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 #  Initialize FastAPI
 app = FastAPI()
 origins = settings.ALLOWED_ORIGINS.split(",")
-app.mount("/api/static", StaticFiles(directory="app/static/Images"), name="static")
+app.mount("/api/static", StaticFiles(directory="app/static/images"), name="static")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

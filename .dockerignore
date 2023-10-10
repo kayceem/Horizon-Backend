@@ -5,3 +5,4 @@
 .env_template
 README.md
 __pycache__
+.env

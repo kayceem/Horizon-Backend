@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     algorithm:str
     token_expiry_minutes:int
     ALLOWED_ORIGINS:str
-    DEBUG: bool
     
     class Config:
         env_file = ".env"
