@@ -49,4 +49,4 @@ app.include_router(router)
 #         host="0.0.0.0",  # Listen on all network interfaces inside the container
 #         port=8000,       # Expose the port that you have configured in Docker
 #         reload=settings.DEBUG  # Enable auto-reload in development
-#     )
+#    
